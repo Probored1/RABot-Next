@@ -28,6 +28,7 @@
     "deploy-commands": "bun run src/deploy-commands.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "bun run src/database/migrate.ts",
+    "db:migrate-wordle": "bun run src/database/migrate-wordle.ts",
     "db:seed": "bun run src/database/seed-teams.ts",
     "tsc": "tsc --noEmit",
     "lint": "eslint src --cache",
