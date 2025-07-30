@@ -23,7 +23,7 @@ import { WordleService } from "../services/wordle.service";
 // let _validationColor: typeof COLORS.SUCCESS | typeof COLORS.ERROR;
 
 //function _someFunction() {
-  // ...
+// ...
 
 //  if (someErrorCondition) {
 //    validationColor = COLORS.ERROR; // valid assignment
@@ -31,7 +31,7 @@ import { WordleService } from "../services/wordle.service";
 //    validationColor = COLORS.SUCCESS; // valid assignment
 //  }
 
-  // ...
+// ...
 //}
 
 const wordleSubmitCommand: SlashCommand = {
@@ -90,8 +90,8 @@ const wordleSubmitCommand: SlashCommand = {
           .setTitle("📅 No Active Wordle Event")
           .setDescription(
             "There is currently no active Wordle Achievement Event. An administrator needs to set today's word to start the event.",
-          )
-//          .setColor(COLORS.WARNING);
+          );
+        //          .setColor(COLORS.WARNING);
 
         await interaction.editReply({ embeds: [noEventEmbed] });
 
@@ -103,8 +103,8 @@ const wordleSubmitCommand: SlashCommand = {
       if (!todayWord) {
         const errorEmbed = new EmbedBuilder()
           .setTitle("❌ Error Loading Event")
-          .setDescription("Could not load today's Wordle word. Please try again later.")
-//          .setColor(COLORS.ERROR);
+          .setDescription("Could not load today's Wordle word. Please try again later.");
+        //          .setColor(COLORS.ERROR);
 
         await interaction.editReply({ embeds: [errorEmbed] });
 
@@ -122,8 +122,8 @@ const wordleSubmitCommand: SlashCommand = {
               name: "📝 How to Connect",
               value: "Use `/wordle-connect <username>` to link your RA account",
             },
-          ])
-//          .setColor(COLORS.WARNING);
+          ]);
+        //          .setColor(COLORS.WARNING);
 
         await interaction.editReply({ embeds: [notConnectedEmbed] });
 
@@ -143,8 +143,8 @@ const wordleSubmitCommand: SlashCommand = {
               value:
                 "• `https://retroachievements.org/achievement/123456`\n• `123456` (just the ID)",
             },
-          ])
-//          .setColor(COLORS.ERROR);
+          ]);
+        //          .setColor(COLORS.ERROR);
 
         await interaction.editReply({ embeds: [urlErrorEmbed] });
 
@@ -163,8 +163,8 @@ const wordleSubmitCommand: SlashCommand = {
       if (!submission) {
         const errorEmbed = new EmbedBuilder()
           .setTitle("❌ Submission Failed")
-          .setDescription("Failed to save your submission. Please try again later.")
-//          .setColor(COLORS.ERROR);
+          .setDescription("Failed to save your submission. Please try again later.");
+        //          .setColor(COLORS.ERROR);
 
         await interaction.editReply({ embeds: [errorEmbed] });
 
@@ -179,7 +179,7 @@ const wordleSubmitCommand: SlashCommand = {
       );
 
       let validationStatus = "";
-//      let validationColor = COLORS.WARNING;
+      //      let validationColor = COLORS.WARNING;
 
       if (!validationResult.isValid) {
         // Mark as invalid
@@ -187,7 +187,7 @@ const wordleSubmitCommand: SlashCommand = {
         await RAUserService.updateUserProgress(discordUserId, todayString, false);
 
         validationStatus = "❌ **Validation Failed**";
-//        validationColor = COLORS.ERROR as number;
+        //        validationColor = COLORS.ERROR as number;
       } else if (validationResult.achievementTitles) {
         // Validate first letters match
         const letterValidation = WordleService.validateAchievementTitles(
@@ -205,7 +205,7 @@ const wordleSubmitCommand: SlashCommand = {
           await RAUserService.updateUserProgress(discordUserId, todayString, false);
 
           validationStatus = "❌ **Letter Validation Failed**";
-//          validationColor = COLORS.ERROR as number;
+          //          validationColor = COLORS.ERROR as number;
         } else {
           // Mark as valid
           await RAUserService.markSubmissionValidated(
@@ -220,7 +220,7 @@ const wordleSubmitCommand: SlashCommand = {
           );
 
           validationStatus = "✅ **Validation Successful**";
-//          validationColor = COLORS.SUCCESS as number;
+          //          validationColor = COLORS.SUCCESS as number;
 
           // Check if user became eligible for prize
           if (updatedProgress?.isEligibleForPrize && updatedProgress.successfulSubmissions === 30) {
@@ -237,7 +237,7 @@ const wordleSubmitCommand: SlashCommand = {
         await RAUserService.updateUserProgress(discordUserId, todayString, false);
 
         validationStatus = "❌ **Validation Error**";
-//        validationColor = COLORS.ERROR as number;
+        //        validationColor = COLORS.ERROR as number;
       }
 
       // Build result embed
@@ -249,8 +249,8 @@ const wordleSubmitCommand: SlashCommand = {
             name: "📝 Submitted Achievements",
             value: achievementInputs.map((input, i) => `${i + 1}. ${input}`).join("\n"),
           },
-        ])
-//        .setColor(validationColor);
+        ]);
+      //        .setColor(validationColor);
 
       if (validationResult.achievementTitles && validationResult.isValid) {
         resultEmbed.addFields([
@@ -287,8 +287,8 @@ const wordleSubmitCommand: SlashCommand = {
         .setTitle("❌ Submission Error")
         .setDescription(
           "An unexpected error occurred while processing your submission. Please try again later.",
-        )
-//        .setColor(COLORS.ERROR);
+        );
+      //        .setColor(COLORS.ERROR);
 
       await interaction.editReply({ embeds: [errorEmbed] });
     }
