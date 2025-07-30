@@ -158,7 +158,7 @@ const wordleSubmitCommand: SlashCommand = {
         await RAUserService.updateUserProgress(discordUserId, todayString, false);
 
         validationStatus = "❌ **Validation Failed**";
-	validationColor = COLORS.ERROR as number;
+        validationColor = COLORS.ERROR as number;
       } else if (validationResult.achievementTitles) {
         // Validate first letters match
         const letterValidation = WordleService.validateAchievementTitles(
@@ -176,7 +176,7 @@ const wordleSubmitCommand: SlashCommand = {
           await RAUserService.updateUserProgress(discordUserId, todayString, false);
 
           validationStatus = "❌ **Letter Validation Failed**";
-	  validationColor = COLORS.ERROR as number;
+          validationColor = COLORS.ERROR as number;
         } else {
           // Mark as valid
           await RAUserService.markSubmissionValidated(
