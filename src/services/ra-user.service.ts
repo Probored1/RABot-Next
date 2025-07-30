@@ -1,5 +1,3 @@
-import { logError } from "../utils/logger";
-
 import {
   buildAuthorization,
   getAchievementsEarnedOnDay,
@@ -14,6 +12,7 @@ import {
   wordleUserProgress,
   wordleUserSubmissions,
 } from "../database/schema";
+import { logError } from "../utils/logger";
 // import { logError, logger } from "../utils/logger";
 
 export interface UserConnection {
