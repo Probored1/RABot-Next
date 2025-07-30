@@ -32,7 +32,7 @@ import { WordleService } from "../services/wordle.service";
 //  }
 
   // ...
-}
+//}
 
 const wordleSubmitCommand: SlashCommand = {
   data: new SlashCommandBuilder()
