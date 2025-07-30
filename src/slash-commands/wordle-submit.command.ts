@@ -158,7 +158,7 @@ const wordleSubmitCommand: SlashCommand = {
         await RAUserService.updateUserProgress(discordUserId, todayString, false);
 
         validationStatus = "❌ **Validation Failed**";
-        validationColor = COLORS.ERROR;
+	validationColor = COLORS.ERROR as number;
       } else if (validationResult.achievementTitles) {
         // Validate first letters match
         const letterValidation = WordleService.validateAchievementTitles(
@@ -176,7 +176,7 @@ const wordleSubmitCommand: SlashCommand = {
           await RAUserService.updateUserProgress(discordUserId, todayString, false);
 
           validationStatus = "❌ **Letter Validation Failed**";
-          validationColor = COLORS.ERROR;
+	  validationColor = COLORS.ERROR as number;
         } else {
           // Mark as valid
           await RAUserService.markSubmissionValidated(
@@ -191,7 +191,7 @@ const wordleSubmitCommand: SlashCommand = {
           );
 
           validationStatus = "✅ **Validation Successful**";
-          validationColor = COLORS.SUCCESS as 16776960;
+          validationColor = COLORS.SUCCESS as number;
 
           // Check if user became eligible for prize
           if (updatedProgress?.isEligibleForPrize && updatedProgress.successfulSubmissions === 30) {
@@ -208,7 +208,7 @@ const wordleSubmitCommand: SlashCommand = {
         await RAUserService.updateUserProgress(discordUserId, todayString, false);
 
         validationStatus = "❌ **Validation Error**";
-        validationColor = COLORS.ERROR as 16776960;
+        validationColor = COLORS.ERROR as number;
       }
 
       // Build result embed
