@@ -1,3 +1,34 @@
+
+// Define COLORS as a const object so values have literal types, not just `number`
+const COLORS = {
+  SUCCESS: 0x00FF00, // 65280 decimal
+  ERROR: 0xFF0000,   // 16711680 decimal
+} as const;
+
+// Somewhere in your code where you declare validationColor, specify the type as one of the literal values:
+// let validationColor: typeof COLORS.SUCCESS | typeof COLORS.ERROR;
+
+// Then assign without casting:
+// validationColor = COLORS.ERROR;   // no TS error
+// ...
+// validationColor = COLORS.SUCCESS; // no TS error
+
+// Assuming validationColor is declared here:
+let validationColor: typeof COLORS.SUCCESS | typeof COLORS.ERROR;
+
+function someFunction() {
+  // ...
+
+  if (someErrorCondition) {
+    validationColor = COLORS.ERROR;  // valid assignment
+  } else {
+    validationColor = COLORS.SUCCESS; // valid assignment
+  }
+
+  // ...
+}
+
+
 import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
 
 import { COLORS } from "../config/constants";
