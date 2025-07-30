@@ -1,20 +1,13 @@
 import { logApiCall, logError } from "../utils/logger";
 
-/**
- * Service for fetching daily Wordle words from online APIs.
- * Provides automatic daily word generation without admin input.
- */
 export class WordleApiService {
-  private static readonly WORDLE_API_URL = "https://wordle-api.vercel.app/api/wordle";
+  private static readonly WORDLE_API_URL = "https://api.wordle.com/api/v1/words/random";
   private static readonly FALLBACK_WORDS = [
     "ASSET", "BRAVE", "CHARM", "DREAM", "EARTH", "FAITH", "GLORY", "HAPPY", "IDEAL", "JOYCE",
     "KNIFE", "LIGHT", "MAGIC", "NIGHT", "OCEAN", "PEACE", "QUIET", "RADIO", "SPACE", "TRUTH",
     "UNITY", "VOICE", "WATER", "YOUTH", "ZEBRA"
   ];
 
-  /**
-   * Fetch today's word from the Wordle API
-   */
   static async fetchTodayWord(): Promise<string | null> {
     try {
       const startTime = Date.now();
@@ -29,29 +22,13 @@ export class WordleApiService {
 
       const data = await response.json() as unknown;
       
-      // The API returns the word in different formats depending on the endpoint
-      // Try to extract the word from various possible response structures
-      let word: string | undefined;
-      
-      if (typeof data === "string") {
-        word = data;
-      } else if (data && typeof data === "object" && "word" in data && typeof data.word === "string") {
-        word = data.word;
-      } else if (data && typeof data === "object" && "today" in data && typeof data.today === "string") {
-        word = data.today;
-      } else if (data && typeof data === "object" && "solution" in data && typeof data.solution === "string") {
-        word = data.solution;
-      } else if (Array.isArray(data) && data.length > 0 && typeof data[0] === "string") {
-        word = data[0];
-      }
-
-      if (!word || typeof word !== "string") {
+      // Extract word from various possible response formats
+      const word = this.extractWordFromResponse(data);
+      if (!word) {
         throw new Error("Invalid response format from Wordle API");
       }
 
-      // Clean and validate the word
       const cleanWord = word.trim().toUpperCase();
-      
       if (!/^[A-Z]{5}$/.test(cleanWord)) {
         throw new Error(`Invalid word format: ${cleanWord}`);
       }
@@ -59,49 +36,43 @@ export class WordleApiService {
       return cleanWord;
     } catch (error) {
       logError(error, { event: "wordle_api_fetch_error" });
-      
-      // Return null to indicate failure, let the service handle fallback
       return null;
     }
   }
 
-  /**
-   * Get a fallback word based on the current date
-   * This ensures we always have a word even if the API fails
-   */
+  private static extractWordFromResponse(data: unknown): string | undefined {
+    if (typeof data === "string") return data;
+    if (Array.isArray(data) && typeof data[0] === "string") return data[0];
+    
+    if (data && typeof data === "object") {
+      const obj = data as Record<string, unknown>;
+      if (typeof obj.word === "string") return obj.word;
+      if (typeof obj.today === "string") return obj.today;
+      if (typeof obj.solution === "string") return obj.solution;
+      if (typeof obj.answer === "string") return obj.answer;
+    }
+    
+    return undefined;
+  }
+
   static getFallbackWord(): string {
     const today = new Date();
     const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
-    
-    // Use the day of year to select a consistent fallback word
-    const index = dayOfYear % this.FALLBACK_WORDS.length;
-    return this.FALLBACK_WORDS[index]!;
+    return this.FALLBACK_WORDS[dayOfYear % this.FALLBACK_WORDS.length]!;
   }
 
-  /**
-   * Get today's word with fallback support
-   */
   static async getTodayWord(): Promise<string> {
-    // Try to fetch from API first
     const apiWord = await this.fetchTodayWord();
-    
-    if (apiWord) {
-      return apiWord;
-    }
+    if (apiWord) return apiWord;
 
-    // If API fails, use fallback word
     const fallbackWord = this.getFallbackWord();
     logError(new Error("Using fallback word due to API failure"), { 
       event: "wordle_api_fallback_used", 
       fallbackWord 
     });
-    
     return fallbackWord;
   }
 
-  /**
-   * Validate if a word is a valid 5-letter word
-   */
   static isValidWord(word: string): boolean {
     return /^[A-Z]{5}$/.test(word.trim().toUpperCase());
   }

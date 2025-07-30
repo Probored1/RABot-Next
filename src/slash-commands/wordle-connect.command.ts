@@ -56,32 +56,29 @@ const wordleConnectCommand: SlashCommand = {
         return;
       }
 
-      // Success message
-      const successEmbed = new EmbedBuilder()
-        .setTitle("✅ Account Connected!")
-        .setDescription(
-          `Successfully connected your Discord account to **${raUsername}** on RetroAchievements!`,
-        )
-        .addFields([
-          {
-            name: "📝 What's Next?",
-            value:
-              "• Use `/wordle-status` to check today's word and your progress\n• Use `/wordle-submit` to submit your 5 achievements\n• Use `/wordle-reset` if you need to change your submission",
-          },
-          {
-            name: "🎯 Event Goal",
-            value:
-              "Complete 30 successful Wordle Achievement submissions to become eligible for a prize!",
-          },
-          {
-            name: "🔄 Auto-System",
-            value: "Words are now automatically fetched daily from an online API - no admin input required!",
-          },
-        ])
-        .setColor(COLORS.SUCCESS)
-        .setFooter({ text: "Your account verification is complete!" });
-
-      await interaction.editReply({ embeds: [successEmbed] });
+      await interaction.editReply({
+        embeds: [
+          new EmbedBuilder()
+            .setTitle("✅ Account Connected!")
+            .setDescription(`Successfully connected your Discord account to **${raUsername}** on RetroAchievements!`)
+            .addFields([
+              {
+                name: "📝 What's Next?",
+                value: "• Use `/wordle-status` to check today's word and your progress\n• Use `/wordle-submit` to submit your 5 achievements\n• Use `/wordle-reset` if you need to change your submission",
+              },
+              {
+                name: "🎯 Event Goal",
+                value: "Complete 30 successful Wordle Achievement submissions to become eligible for a prize!",
+              },
+              {
+                name: "🔄 Auto-System",
+                value: "Words are now automatically fetched daily from an online API - no admin input required!",
+              },
+            ])
+            .setColor(COLORS.SUCCESS)
+            .setFooter({ text: "Your account verification is complete!" }),
+        ],
+      });
     } catch (error) {
       console.error("Error in wordle-connect command:", error);
 
