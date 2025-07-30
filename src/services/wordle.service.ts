@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 
 import { db } from "../database/db";
 import { wordleDailyWords } from "../database/schema";
-// import { logError, logger } from "../utils/logger";
+import { logError } from "../utils/logger";
 
 export interface DailyWord {
   id: number;

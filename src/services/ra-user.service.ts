@@ -1,3 +1,5 @@
+import { logError } from "../utils/logger";
+
 import {
   buildAuthorization,
   getAchievementsEarnedOnDay,

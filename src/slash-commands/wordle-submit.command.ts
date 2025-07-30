@@ -191,7 +191,7 @@ const wordleSubmitCommand: SlashCommand = {
           );
 
           validationStatus = "✅ **Validation Successful**";
-          validationColor = COLORS.SUCCESS;
+	  validationColor = COLORS.SUCCESS as 16776960;
 
           // Check if user became eligible for prize
           if (updatedProgress?.isEligibleForPrize && updatedProgress.successfulSubmissions === 30) {
@@ -208,7 +208,7 @@ const wordleSubmitCommand: SlashCommand = {
         await RAUserService.updateUserProgress(discordUserId, todayString, false);
 
         validationStatus = "❌ **Validation Error**";
-        validationColor = COLORS.ERROR;
+	validationColor = COLORS.ERROR as 16776960;
       }
 
       // Build result embed
