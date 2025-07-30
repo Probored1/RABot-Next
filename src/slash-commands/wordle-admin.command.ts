@@ -23,9 +23,7 @@ const wordleAdminCommand: SlashCommand = {
         ),
     )
     .addSubcommand((subcommand) =>
-      subcommand
-        .setName("get-word")
-        .setDescription("Get today's current Wordle word"),
+      subcommand.setName("get-word").setDescription("Get today's current Wordle word"),
     ),
 
   async execute(interaction) {
@@ -38,6 +36,7 @@ const wordleAdminCommand: SlashCommand = {
         .setColor(COLORS.ERROR);
 
       await interaction.reply({ embeds: [notAdminEmbed], ephemeral: true });
+
       return;
     }
 
@@ -62,6 +61,7 @@ async function handleSetWord(interaction: any) {
       .setColor(COLORS.ERROR);
 
     await interaction.reply({ embeds: [invalidWordEmbed], ephemeral: true });
+
     return;
   }
 
@@ -77,6 +77,7 @@ async function handleSetWord(interaction: any) {
         .setColor(COLORS.ERROR);
 
       await interaction.editReply({ embeds: [errorEmbed] });
+
       return;
     }
 
@@ -112,7 +113,9 @@ async function handleSetWord(interaction: any) {
 
     const errorEmbed = new EmbedBuilder()
       .setTitle("❌ Error Setting Word")
-      .setDescription("An unexpected error occurred while setting the word. Please try again later.")
+      .setDescription(
+        "An unexpected error occurred while setting the word. Please try again later.",
+      )
       .setColor(COLORS.ERROR);
 
     await interaction.editReply({ embeds: [errorEmbed] });
@@ -138,6 +141,7 @@ async function handleGetWord(interaction: any) {
         .setColor(COLORS.WARNING);
 
       await interaction.editReply({ embeds: [noWordEmbed] });
+
       return;
     }
 
@@ -173,7 +177,9 @@ async function handleGetWord(interaction: any) {
 
     const errorEmbed = new EmbedBuilder()
       .setTitle("❌ Error Getting Word")
-      .setDescription("An unexpected error occurred while retrieving the word. Please try again later.")
+      .setDescription(
+        "An unexpected error occurred while retrieving the word. Please try again later.",
+      )
       .setColor(COLORS.ERROR);
 
     await interaction.editReply({ embeds: [errorEmbed] });

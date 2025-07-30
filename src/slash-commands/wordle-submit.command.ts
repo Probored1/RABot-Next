@@ -65,6 +65,7 @@ const wordleSubmitCommand: SlashCommand = {
           .setColor(COLORS.WARNING);
 
         await interaction.editReply({ embeds: [noEventEmbed] });
+
         return;
       }
 
@@ -77,6 +78,7 @@ const wordleSubmitCommand: SlashCommand = {
           .setColor(COLORS.ERROR);
 
         await interaction.editReply({ embeds: [errorEmbed] });
+
         return;
       }
 
@@ -95,11 +97,13 @@ const wordleSubmitCommand: SlashCommand = {
           .setColor(COLORS.WARNING);
 
         await interaction.editReply({ embeds: [notConnectedEmbed] });
+
         return;
       }
 
       // Validate achievement URLs/IDs
-      const { ids: achievementIds, errors: urlErrors } = WordleService.validateAchievementIds(achievementInputs);
+      const { ids: achievementIds, errors: urlErrors } =
+        WordleService.validateAchievementIds(achievementInputs);
       if (urlErrors.length > 0) {
         const urlErrorEmbed = new EmbedBuilder()
           .setTitle("❌ Invalid Achievement URLs/IDs")
@@ -107,12 +111,14 @@ const wordleSubmitCommand: SlashCommand = {
           .addFields([
             {
               name: "✅ Valid Formats",
-              value: "• `https://retroachievements.org/achievement/123456`\n• `123456` (just the ID)",
+              value:
+                "• `https://retroachievements.org/achievement/123456`\n• `123456` (just the ID)",
             },
           ])
           .setColor(COLORS.ERROR);
 
         await interaction.editReply({ embeds: [urlErrorEmbed] });
+
         return;
       }
 
@@ -132,6 +138,7 @@ const wordleSubmitCommand: SlashCommand = {
           .setColor(COLORS.ERROR);
 
         await interaction.editReply({ embeds: [errorEmbed] });
+
         return;
       }
 
@@ -161,15 +168,27 @@ const wordleSubmitCommand: SlashCommand = {
 
         if (!letterValidation.isValid) {
           // Mark as invalid due to letter mismatch
-          await RAUserService.markSubmissionValidated(submission.id, false, letterValidation.message);
+          await RAUserService.markSubmissionValidated(
+            submission.id,
+            false,
+            letterValidation.message,
+          );
           await RAUserService.updateUserProgress(discordUserId, todayString, false);
 
           validationStatus = "❌ **Letter Validation Failed**";
           validationColor = COLORS.ERROR;
         } else {
           // Mark as valid
-          await RAUserService.markSubmissionValidated(submission.id, true, letterValidation.message);
-          const updatedProgress = await RAUserService.updateUserProgress(discordUserId, todayString, true);
+          await RAUserService.markSubmissionValidated(
+            submission.id,
+            true,
+            letterValidation.message,
+          );
+          const updatedProgress = await RAUserService.updateUserProgress(
+            discordUserId,
+            todayString,
+            true,
+          );
 
           validationStatus = "✅ **Validation Successful**";
           validationColor = COLORS.SUCCESS;
@@ -222,7 +241,8 @@ const wordleSubmitCommand: SlashCommand = {
         },
         {
           name: "📊 Next Steps",
-          value: "• Use `/wordle-status` to check your overall progress\n• Use `/wordle-reset` if you need to change your submission\n• Come back tomorrow for the next word!",
+          value:
+            "• Use `/wordle-status` to check your overall progress\n• Use `/wordle-reset` if you need to change your submission\n• Come back tomorrow for the next word!",
         },
       ]);
 

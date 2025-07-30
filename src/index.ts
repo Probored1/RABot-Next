@@ -263,14 +263,17 @@ process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
 process.on("SIGINT", () => gracefulShutdown("SIGINT"));
 
 // Handle uncaught errors.
-process.on("uncaughtException", (error) => {
-  logger.fatal("Uncaught exception:", error);
-  gracefulShutdown("uncaughtException");
-});
-
 process.on("unhandledRejection", (reason, promise) => {
+  console.error("Unhandled Rejection at:", promise);
+  console.error("Reason:", reason);
   logger.fatal("Unhandled rejection at:", promise, "reason:", reason);
   gracefulShutdown("unhandledRejection");
+});
+
+process.on("uncaughtException", (error) => {
+  console.error("Uncaught Exception:", error);
+  logger.fatal("Uncaught exception:", error);
+  gracefulShutdown("uncaughtException");
 });
 
 client.login(process.env.DISCORD_TOKEN);

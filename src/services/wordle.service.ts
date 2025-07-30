@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 
 import { db } from "../database/db";
 import { wordleDailyWords } from "../database/schema";
-import { logError, logger } from "../utils/logger";
+// import { logError, logger } from "../utils/logger";
 
 export interface DailyWord {
   id: number;
@@ -27,6 +27,7 @@ export class WordleService {
    */
   static getTodayString(): string {
     const today = new Date();
+
     return today.toISOString().split("T")[0]!;
   }
 
@@ -46,6 +47,7 @@ export class WordleService {
 
       if (existingWord.length > 0) {
         const word = existingWord[0]!;
+
         return {
           id: word.id,
           date: word.date,
@@ -59,6 +61,7 @@ export class WordleService {
       return null;
     } catch (error) {
       logError(error, { event: "wordle_get_today_word_error" });
+
       return null;
     }
   }
@@ -91,6 +94,7 @@ export class WordleService {
 
         if (updated.length > 0) {
           const updatedWord = updated[0]!;
+
           return {
             id: updatedWord.id,
             date: updatedWord.date,
@@ -112,6 +116,7 @@ export class WordleService {
 
         if (inserted.length > 0) {
           const insertedWord = inserted[0]!;
+
           return {
             id: insertedWord.id,
             date: insertedWord.date,
@@ -125,6 +130,7 @@ export class WordleService {
       return null;
     } catch (error) {
       logError(error, { event: "wordle_set_today_word_error", word });
+
       return null;
     }
   }
@@ -196,6 +202,7 @@ export class WordleService {
       return null;
     } catch (error) {
       logError(error, { event: "extract_achievement_id_error", url });
+
       return null;
     }
   }
@@ -228,6 +235,7 @@ export class WordleService {
    */
   static formatTodayWordDisplay(dailyWord: DailyWord): string {
     const letterDisplay = dailyWord.letters.join(" - ");
+
     return `**Today's Wordle Word:** ${dailyWord.word}\n**Required Letters:** ${letterDisplay}\n\nFind 5 achievements where the first letter matches each position!`;
   }
 
@@ -251,6 +259,7 @@ export class WordleService {
    */
   static async isEventActive(): Promise<boolean> {
     const todayWord = await this.getTodayWord();
+
     return todayWord !== null;
   }
 
@@ -267,6 +276,7 @@ export class WordleService {
 
       if (word.length > 0) {
         const wordData = word[0]!;
+
         return {
           id: wordData.id,
           date: wordData.date,
@@ -279,6 +289,7 @@ export class WordleService {
       return null;
     } catch (error) {
       logError(error, { event: "wordle_get_word_for_date_error", date });
+
       return null;
     }
   }

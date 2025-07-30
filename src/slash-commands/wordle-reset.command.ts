@@ -28,6 +28,7 @@ const wordleResetCommand: SlashCommand = {
           .setColor(COLORS.WARNING);
 
         await interaction.editReply({ embeds: [noEventEmbed] });
+
         return;
       }
 
@@ -46,6 +47,7 @@ const wordleResetCommand: SlashCommand = {
           .setColor(COLORS.WARNING);
 
         await interaction.editReply({ embeds: [notConnectedEmbed] });
+
         return;
       }
 
@@ -60,12 +62,14 @@ const wordleResetCommand: SlashCommand = {
           .addFields([
             {
               name: "📝 Next Steps",
-              value: "• Use `/wordle-status` to check today's word\n• Use `/wordle-submit` to make your submission",
+              value:
+                "• Use `/wordle-status` to check today's word\n• Use `/wordle-submit` to make your submission",
             },
           ])
           .setColor(COLORS.INFO);
 
         await interaction.editReply({ embeds: [noSubmissionEmbed] });
+
         return;
       }
 
@@ -76,11 +80,13 @@ const wordleResetCommand: SlashCommand = {
         .addFields([
           {
             name: "📝 What's Next?",
-            value: "• Use `/wordle-status` to check today's word requirements\n• Use `/wordle-submit` to make a new submission",
+            value:
+              "• Use `/wordle-status` to check today's word requirements\n• Use `/wordle-submit` to make a new submission",
           },
           {
             name: "ℹ️ Important",
-            value: "You can only make one submission per day, so make sure your new submission is correct!",
+            value:
+              "You can only make one submission per day, so make sure your new submission is correct!",
           },
         ])
         .setColor(COLORS.SUCCESS)
@@ -92,7 +98,9 @@ const wordleResetCommand: SlashCommand = {
 
       const errorEmbed = new EmbedBuilder()
         .setTitle("❌ Reset Error")
-        .setDescription("An unexpected error occurred while resetting your submission. Please try again later.")
+        .setDescription(
+          "An unexpected error occurred while resetting your submission. Please try again later.",
+        )
         .setColor(COLORS.ERROR);
 
       await interaction.editReply({ embeds: [errorEmbed] });

@@ -1,4 +1,8 @@
-import { buildAuthorization, getAchievementsEarnedOnDay, getUserProfile } from "@retroachievements/api";
+import {
+  buildAuthorization,
+  getAchievementsEarnedOnDay,
+  getUserProfile,
+} from "@retroachievements/api";
 import { and, eq } from "drizzle-orm";
 
 import { RA_WEB_API_KEY } from "../config/constants";
@@ -8,7 +12,7 @@ import {
   wordleUserProgress,
   wordleUserSubmissions,
 } from "../database/schema";
-import { logError, logger } from "../utils/logger";
+// import { logError, logger } from "../utils/logger";
 
 export interface UserConnection {
   id: number;
@@ -56,7 +60,10 @@ export class RAUserService {
   /**
    * Connect a Discord user to their RetroAchievements account
    */
-  static async connectUser(discordUserId: string, raUsername: string): Promise<UserConnection | null> {
+  static async connectUser(
+    discordUserId: string,
+    raUsername: string,
+  ): Promise<UserConnection | null> {
     try {
       // First verify the RA username exists
       const isValid = await this.verifyRAUser(raUsername);
@@ -85,6 +92,7 @@ export class RAUserService {
 
         if (updated.length > 0) {
           const connection = updated[0]!;
+
           return {
             id: connection.id,
             discordUserId: connection.discordUserId,
@@ -108,6 +116,7 @@ export class RAUserService {
 
         if (inserted.length > 0) {
           const connection = inserted[0]!;
+
           return {
             id: connection.id,
             discordUserId: connection.discordUserId,
@@ -122,6 +131,7 @@ export class RAUserService {
       return null;
     } catch (error) {
       logError(error, { event: "ra_user_connect_error", discordUserId, raUsername });
+
       return null;
     }
   }
@@ -137,9 +147,11 @@ export class RAUserService {
       });
 
       const profile = await getUserProfile(authorization, { username: raUsername });
+
       return profile !== null;
     } catch (error) {
       logError(error, { event: "ra_user_verify_error", raUsername });
+
       return false;
     }
   }
@@ -157,6 +169,7 @@ export class RAUserService {
 
       if (connection.length > 0) {
         const conn = connection[0]!;
+
         return {
           id: conn.id,
           discordUserId: conn.discordUserId,
@@ -170,6 +183,7 @@ export class RAUserService {
       return null;
     } catch (error) {
       logError(error, { event: "ra_user_get_connection_error", discordUserId });
+
       return null;
     }
   }
@@ -235,6 +249,7 @@ export class RAUserService {
         achievementIds,
         date,
       });
+
       return {
         isValid: false,
         message: "Error occurred while validating achievements. Please try again later.",
@@ -286,6 +301,7 @@ export class RAUserService {
 
         if (updated.length > 0) {
           const submission = updated[0]!;
+
           return {
             id: submission.id,
             discordUserId: submission.discordUserId,
@@ -314,6 +330,7 @@ export class RAUserService {
 
         if (inserted.length > 0) {
           const submission = inserted[0]!;
+
           return {
             id: submission.id,
             discordUserId: submission.discordUserId,
@@ -336,6 +353,7 @@ export class RAUserService {
         wordleDate,
         achievementIds,
       });
+
       return null;
     }
   }
@@ -353,6 +371,7 @@ export class RAUserService {
 
       if (progress.length > 0) {
         const userProgress = progress[0]!;
+
         return {
           id: userProgress.id,
           discordUserId: userProgress.discordUserId,
@@ -368,6 +387,7 @@ export class RAUserService {
       return null;
     } catch (error) {
       logError(error, { event: "ra_user_get_progress_error", discordUserId });
+
       return null;
     }
   }
@@ -454,6 +474,7 @@ export class RAUserService {
         wordleDate,
         isSuccessful,
       });
+
       return null;
     }
   }
@@ -480,6 +501,7 @@ export class RAUserService {
       return updated.length > 0;
     } catch (error) {
       logError(error, { event: "ra_user_mark_validated_error", submissionId, isValid, message });
+
       return false;
     }
   }
@@ -502,6 +524,7 @@ export class RAUserService {
       return deleted.length > 0;
     } catch (error) {
       logError(error, { event: "ra_user_delete_submission_error", discordUserId, wordleDate });
+
       return false;
     }
   }

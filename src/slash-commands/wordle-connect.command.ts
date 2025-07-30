@@ -7,7 +7,9 @@ import { RAUserService } from "../services/ra-user.service";
 const wordleConnectCommand: SlashCommand = {
   data: new SlashCommandBuilder()
     .setName("wordle-connect")
-    .setDescription("Connect your Discord account to your RetroAchievements profile for the Wordle Achievement Event")
+    .setDescription(
+      "Connect your Discord account to your RetroAchievements profile for the Wordle Achievement Event",
+    )
     .addStringOption((option) =>
       option
         .setName("username")
@@ -35,6 +37,7 @@ const wordleConnectCommand: SlashCommand = {
           .setFooter({ text: "Make sure to use your exact RA username" });
 
         await interaction.editReply({ embeds: [errorEmbed] });
+
         return;
       }
 
@@ -49,6 +52,7 @@ const wordleConnectCommand: SlashCommand = {
           .setColor(COLORS.ERROR);
 
         await interaction.editReply({ embeds: [errorEmbed] });
+
         return;
       }
 
@@ -61,11 +65,13 @@ const wordleConnectCommand: SlashCommand = {
         .addFields([
           {
             name: "📝 What's Next?",
-            value: "• Use `/wordle-status` to check today's word and your progress\n• Use `/wordle-submit` to submit your 5 achievements\n• Use `/wordle-reset` if you need to change your submission",
+            value:
+              "• Use `/wordle-status` to check today's word and your progress\n• Use `/wordle-submit` to submit your 5 achievements\n• Use `/wordle-reset` if you need to change your submission",
           },
           {
             name: "🎯 Event Goal",
-            value: "Complete 30 successful Wordle Achievement submissions to become eligible for a prize!",
+            value:
+              "Complete 30 successful Wordle Achievement submissions to become eligible for a prize!",
           },
         ])
         .setColor(COLORS.SUCCESS)

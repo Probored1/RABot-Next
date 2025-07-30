@@ -1,5 +1,5 @@
-import { drizzle } from "drizzle-orm/better-sqlite3";
 import Database from "better-sqlite3";
+import { drizzle } from "drizzle-orm/better-sqlite3";
 
 // Create new tables for Wordle Achievement Event
 const createWordleTablesSQL = `
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS wordle_user_submissions (
   validation_message TEXT,
   submitted_at INTEGER NOT NULL DEFAULT (unixepoch()),
   validated_at INTEGER,
-  PRIMARY KEY (discord_user_id, wordle_date)
+  UNIQUE (discord_user_id, wordle_date)
 );
 
 -- Wordle Achievement Event - User Progress
@@ -51,13 +51,11 @@ CREATE TABLE IF NOT EXISTS wordle_user_progress (
 
 async function runWordleMigration() {
   try {
-    // Connect to database
     const sqlite = new Database("./data.db");
-    const db = drizzle(sqlite);
+    const _db = drizzle(sqlite);
 
     console.log("🔄 Running Wordle Achievement Event migration...");
 
-    // Execute the SQL
     sqlite.exec(createWordleTablesSQL);
 
     console.log("✅ Wordle Achievement Event migration completed successfully!");
@@ -74,8 +72,8 @@ async function runWordleMigration() {
   }
 }
 
-// Run if called directly
-if (require.main === module) {
+// ✅ Use ESM-compatible entry point check
+if (import.meta.main) {
   runWordleMigration();
 }
 

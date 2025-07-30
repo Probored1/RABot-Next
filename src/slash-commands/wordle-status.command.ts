@@ -32,6 +32,7 @@ const wordleStatusCommand: SlashCommand = {
           .setFooter({ text: "Check back later or contact an administrator" });
 
         await interaction.editReply({ embeds: [noEventEmbed] });
+
         return;
       }
 
@@ -44,6 +45,7 @@ const wordleStatusCommand: SlashCommand = {
           .setColor(COLORS.ERROR);
 
         await interaction.editReply({ embeds: [errorEmbed] });
+
         return;
       }
 
@@ -66,6 +68,7 @@ const wordleStatusCommand: SlashCommand = {
           .setColor(COLORS.WARNING);
 
         await interaction.editReply({ embeds: [notConnectedEmbed] });
+
         return;
       }
 
@@ -88,6 +91,7 @@ const wordleStatusCommand: SlashCommand = {
         .then((results) => {
           if (results.length > 0) {
             const submission = results[0]!;
+
             return {
               id: submission.id,
               discordUserId: submission.discordUserId,
@@ -100,6 +104,7 @@ const wordleStatusCommand: SlashCommand = {
               validatedAt: submission.validatedAt,
             };
           }
+
           return null;
         });
 
@@ -168,7 +173,8 @@ const wordleStatusCommand: SlashCommand = {
         statusEmbed.addFields([
           {
             name: "📊 Overall Progress",
-            value: "**0/30** successful submissions\nMake your first submission to start tracking progress!",
+            value:
+              "**0/30** successful submissions\nMake your first submission to start tracking progress!",
           },
         ]);
       }
@@ -196,7 +202,9 @@ const wordleStatusCommand: SlashCommand = {
 
       const errorEmbed = new EmbedBuilder()
         .setTitle("❌ Status Error")
-        .setDescription("An unexpected error occurred while fetching your status. Please try again later.")
+        .setDescription(
+          "An unexpected error occurred while fetching your status. Please try again later.",
+        )
         .setColor(COLORS.ERROR);
 
       await interaction.editReply({ embeds: [errorEmbed] });
