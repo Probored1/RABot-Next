@@ -1,8 +1,14 @@
-
 // Define COLORS as a const object so values have literal types, not just `number`
+import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
+
+import { COLORS } from "../config/constants";
+import type { SlashCommand } from "../models";
+import { RAUserService } from "../services/ra-user.service";
+import { WordleService } from "../services/wordle.service";
+
 const COLORS = {
-  SUCCESS: 0x00FF00, // 65280 decimal
-  ERROR: 0xFF0000,   // 16711680 decimal
+  SUCCESS: 0x00ff00, // 65280 decimal
+  ERROR: 0xff0000, // 16711680 decimal
 } as const;
 
 // Somewhere in your code where you declare validationColor, specify the type as one of the literal values:
@@ -14,27 +20,19 @@ const COLORS = {
 // validationColor = COLORS.SUCCESS; // no TS error
 
 // Assuming validationColor is declared here:
-let validationColor: typeof COLORS.SUCCESS | typeof COLORS.ERROR;
+let _validationColor: typeof COLORS.SUCCESS | typeof COLORS.ERROR;
 
-function someFunction() {
+function _someFunction() {
   // ...
 
   if (someErrorCondition) {
-    validationColor = COLORS.ERROR;  // valid assignment
+    validationColor = COLORS.ERROR; // valid assignment
   } else {
     validationColor = COLORS.SUCCESS; // valid assignment
   }
 
   // ...
 }
-
-
-import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
-
-import { COLORS } from "../config/constants";
-import type { SlashCommand } from "../models";
-import { RAUserService } from "../services/ra-user.service";
-import { WordleService } from "../services/wordle.service";
 
 const wordleSubmitCommand: SlashCommand = {
   data: new SlashCommandBuilder()
