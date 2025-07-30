@@ -73,6 +73,10 @@ const wordleConnectCommand: SlashCommand = {
             value:
               "Complete 30 successful Wordle Achievement submissions to become eligible for a prize!",
           },
+          {
+            name: "🔄 Auto-System",
+            value: "Words are now automatically fetched daily from an online API - no admin input required!",
+          },
         ])
         .setColor(COLORS.SUCCESS)
         .setFooter({ text: "Your account verification is complete!" });

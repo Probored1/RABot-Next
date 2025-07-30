@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { db } from "../database/db";
 import { wordleDailyWords } from "../database/schema";
 import { logError } from "../utils/logger";
+import { WordleApiService } from "./wordle-api.service";
 
 export interface DailyWord {
   id: number;
@@ -33,6 +34,7 @@ export class WordleService {
 
   /**
    * Get or create today's Wordle word
+   * Now automatically fetches from API if no word exists for today
    */
   static async getTodayWord(): Promise<DailyWord | null> {
     const todayString = this.getTodayString();
@@ -57,8 +59,16 @@ export class WordleService {
         };
       }
 
-      // If no word exists for today, return null (admin needs to set it)
-      return null;
+      // If no word exists for today, automatically fetch from API
+      const apiWord = await WordleApiService.getTodayWord();
+      if (!apiWord) {
+        logError(new Error("Failed to get word from API"), { event: "wordle_api_fetch_failed" });
+        return null;
+      }
+
+      // Save the API word to database
+      const savedWord = await this.setTodayWord(apiWord);
+      return savedWord;
     } catch (error) {
       logError(error, { event: "wordle_get_today_word_error" });
 
@@ -67,7 +77,7 @@ export class WordleService {
   }
 
   /**
-   * Set today's Wordle word (admin function)
+   * Set today's Wordle word (internal function, also used by admin override)
    */
   static async setTodayWord(word: string): Promise<DailyWord | null> {
     const todayString = this.getTodayString();
@@ -133,6 +143,18 @@ export class WordleService {
 
       return null;
     }
+  }
+
+  /**
+   * Admin override function to set a custom word for today
+   */
+  static async setAdminWord(word: string): Promise<DailyWord | null> {
+    // Validate the word format
+    if (!WordleApiService.isValidWord(word)) {
+      throw new Error("Invalid word format. Must be exactly 5 letters.");
+    }
+
+    return this.setTodayWord(word);
   }
 
   /**

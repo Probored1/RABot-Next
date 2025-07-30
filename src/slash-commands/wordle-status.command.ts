@@ -20,16 +20,16 @@ const wordleStatusCommand: SlashCommand = {
     await interaction.deferReply({ ephemeral: true });
 
     try {
-      // Check if event is active
+      // Check if event is active (now automatically fetches word if needed)
       const isEventActive = await WordleService.isEventActive();
       if (!isEventActive) {
         const noEventEmbed = new EmbedBuilder()
-          .setTitle("📅 No Active Wordle Event")
+          .setTitle("📅 Wordle Event Loading")
           .setDescription(
-            "There is currently no active Wordle Achievement Event. An administrator needs to set today's word to start the event.",
+            "The Wordle Achievement Event is loading today's word automatically. Please try again in a moment.",
           )
           .setColor(COLORS.WARNING)
-          .setFooter({ text: "Check back later or contact an administrator" });
+          .setFooter({ text: "Words are now automatically fetched from an online API" });
 
         await interaction.editReply({ embeds: [noEventEmbed] });
 
