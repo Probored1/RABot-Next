@@ -20,55 +20,47 @@ const wordleStatusCommand: SlashCommand = {
     await interaction.deferReply({ ephemeral: true });
 
     try {
-      // Check if event is active
       const isEventActive = await WordleService.isEventActive();
       if (!isEventActive) {
-        const noEventEmbed = new EmbedBuilder()
-          .setTitle("📅 No Active Wordle Event")
-          .setDescription(
-            "There is currently no active Wordle Achievement Event. An administrator needs to set today's word to start the event.",
-          )
-          .setColor(COLORS.WARNING)
-          .setFooter({ text: "Check back later or contact an administrator" });
-
-        await interaction.editReply({ embeds: [noEventEmbed] });
-
+        await interaction.editReply({
+          embeds: [
+            new EmbedBuilder()
+              .setTitle("📅 Wordle Event Loading")
+              .setDescription("The Wordle Achievement Event is loading today's word automatically. Please try again in a moment.")
+              .setColor(COLORS.WARNING)
+              .setFooter({ text: "Words are now automatically fetched from an online API" }),
+          ],
+        });
         return;
       }
 
-      // Get today's word
       const todayWord = await WordleService.getTodayWord();
       if (!todayWord) {
-        const errorEmbed = new EmbedBuilder()
-          .setTitle("❌ Error Loading Event")
-          .setDescription("Could not load today's Wordle word. Please try again later.")
-          .setColor(COLORS.ERROR);
-
-        await interaction.editReply({ embeds: [errorEmbed] });
-
+        await interaction.editReply({
+          embeds: [
+            new EmbedBuilder()
+              .setTitle("❌ Error Loading Event")
+              .setDescription("Could not load today's Wordle word. Please try again later.")
+              .setColor(COLORS.ERROR),
+          ],
+        });
         return;
       }
 
-      // Check if user is connected
       const userConnection = await RAUserService.getUserConnection(discordUserId);
       if (!userConnection) {
-        const notConnectedEmbed = new EmbedBuilder()
-          .setTitle("🔗 Account Not Connected")
-          .setDescription("You need to connect your RetroAchievements account first!")
-          .addFields([
-            {
-              name: "📝 How to Connect",
-              value: "Use `/wordle-connect <username>` to link your RA account",
-            },
-            {
-              name: "📅 Today's Word",
-              value: WordleService.formatTodayWordDisplay(todayWord),
-            },
-          ])
-          .setColor(COLORS.WARNING);
-
-        await interaction.editReply({ embeds: [notConnectedEmbed] });
-
+        await interaction.editReply({
+          embeds: [
+            new EmbedBuilder()
+              .setTitle("🔗 Account Not Connected")
+              .setDescription("You need to connect your RetroAchievements account first!")
+              .addFields([
+                { name: "📝 How to Connect", value: "Use `/wordle-connect <username>` to link your RA account" },
+                { name: "📅 Today's Word", value: WordleService.formatTodayWordDisplay(todayWord) },
+              ])
+              .setColor(COLORS.WARNING),
+          ],
+        });
         return;
       }
 

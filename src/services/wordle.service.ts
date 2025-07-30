@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { db } from "../database/db";
 import { wordleDailyWords } from "../database/schema";
 import { logError } from "../utils/logger";
+import { WordleApiService } from "./wordle-api.service";
 
 export interface DailyWord {
   id: number;
@@ -17,28 +18,15 @@ export interface WordleValidationResult {
   message: string;
 }
 
-/**
- * Service for managing Wordle Achievement Event functionality.
- * Handles daily word generation, letter extraction, and validation logic.
- */
 export class WordleService {
-  /**
-   * Get today's date in YYYY-MM-DD format
-   */
   static getTodayString(): string {
-    const today = new Date();
-
-    return today.toISOString().split("T")[0]!;
+    return new Date().toISOString().split("T")[0]!;
   }
 
-  /**
-   * Get or create today's Wordle word
-   */
   static async getTodayWord(): Promise<DailyWord | null> {
     const todayString = this.getTodayString();
 
     try {
-      // First try to get existing word for today
       const existingWord = await db
         .select()
         .from(wordleDailyWords)
@@ -47,7 +35,6 @@ export class WordleService {
 
       if (existingWord.length > 0) {
         const word = existingWord[0]!;
-
         return {
           id: word.id,
           date: word.date,
@@ -57,24 +44,24 @@ export class WordleService {
         };
       }
 
-      // If no word exists for today, return null (admin needs to set it)
-      return null;
+      const apiWord = await WordleApiService.getTodayWord();
+      if (!apiWord) {
+        logError(new Error("Failed to get word from API"), { event: "wordle_api_fetch_failed" });
+        return null;
+      }
+
+      return await this.setTodayWord(apiWord);
     } catch (error) {
       logError(error, { event: "wordle_get_today_word_error" });
-
       return null;
     }
   }
 
-  /**
-   * Set today's Wordle word (admin function)
-   */
   static async setTodayWord(word: string): Promise<DailyWord | null> {
     const todayString = this.getTodayString();
     const letters = word.toUpperCase().split("");
 
     try {
-      // Check if word for today already exists
       const existingWord = await db
         .select()
         .from(wordleDailyWords)
@@ -82,7 +69,6 @@ export class WordleService {
         .limit(1);
 
       if (existingWord.length > 0) {
-        // Update existing word
         const updated = await db
           .update(wordleDailyWords)
           .set({
@@ -94,7 +80,6 @@ export class WordleService {
 
         if (updated.length > 0) {
           const updatedWord = updated[0]!;
-
           return {
             id: updatedWord.id,
             date: updatedWord.date,
@@ -104,7 +89,6 @@ export class WordleService {
           };
         }
       } else {
-        // Insert new word
         const inserted = await db
           .insert(wordleDailyWords)
           .values({
@@ -116,7 +100,6 @@ export class WordleService {
 
         if (inserted.length > 0) {
           const insertedWord = inserted[0]!;
-
           return {
             id: insertedWord.id,
             date: insertedWord.date,
@@ -130,14 +113,17 @@ export class WordleService {
       return null;
     } catch (error) {
       logError(error, { event: "wordle_set_today_word_error", word });
-
       return null;
     }
   }
 
-  /**
-   * Validate if achievement titles match the required letters
-   */
+  static async setAdminWord(word: string): Promise<DailyWord | null> {
+    if (!WordleApiService.isValidWord(word)) {
+      throw new Error("Invalid word format. Must be exactly 5 letters.");
+    }
+    return this.setTodayWord(word);
+  }
+
   static validateAchievementTitles(
     achievementTitles: string[],
     requiredLetters: string[],
@@ -183,17 +169,12 @@ export class WordleService {
     };
   }
 
-  /**
-   * Extract achievement ID from RetroAchievements URL
-   */
   static extractAchievementId(url: string): number | null {
     try {
-      // Handle both achievement URLs and direct IDs
       if (/^\d+$/.test(url.trim())) {
         return parseInt(url.trim(), 10);
       }
 
-      // Match RetroAchievements achievement URLs
       const achievementMatch = url.match(/retroachievements\.org\/achievement\/(\d+)/i);
       if (achievementMatch) {
         return parseInt(achievementMatch[1]!, 10);
@@ -202,14 +183,10 @@ export class WordleService {
       return null;
     } catch (error) {
       logError(error, { event: "extract_achievement_id_error", url });
-
       return null;
     }
   }
 
-  /**
-   * Validate achievement URLs/IDs
-   */
   static validateAchievementIds(inputs: string[]): { ids: number[]; errors: string[] } {
     const ids: number[] = [];
     const errors: string[] = [];
@@ -230,18 +207,11 @@ export class WordleService {
     return { ids, errors };
   }
 
-  /**
-   * Format today's word display for Discord
-   */
   static formatTodayWordDisplay(dailyWord: DailyWord): string {
     const letterDisplay = dailyWord.letters.join(" - ");
-
     return `**Today's Wordle Word:** ${dailyWord.word}\n**Required Letters:** ${letterDisplay}\n\nFind 5 achievements where the first letter matches each position!`;
   }
 
-  /**
-   * Generate example achievement display
-   */
   static generateExampleDisplay(letters: string[]): string {
     const examples = [
       `${letters[0]}: "A Distorted Village" (starts with ${letters[0]})`,
@@ -254,18 +224,11 @@ export class WordleService {
     return `**Example submissions:**\n${examples.join("\n")}`;
   }
 
-  /**
-   * Check if the event is currently active
-   */
   static async isEventActive(): Promise<boolean> {
     const todayWord = await this.getTodayWord();
-
     return todayWord !== null;
   }
 
-  /**
-   * Get word for a specific date
-   */
   static async getWordForDate(date: string): Promise<DailyWord | null> {
     try {
       const word = await db
@@ -276,7 +239,6 @@ export class WordleService {
 
       if (word.length > 0) {
         const wordData = word[0]!;
-
         return {
           id: wordData.id,
           date: wordData.date,
@@ -289,7 +251,6 @@ export class WordleService {
       return null;
     } catch (error) {
       logError(error, { event: "wordle_get_word_for_date_error", date });
-
       return null;
     }
   }

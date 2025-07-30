@@ -4,6 +4,13 @@ A Discord bot feature for the RetroAchievements community that runs daily "Wordl
 
 ## How It Works
 
+### Automatic Daily Words
+The system now automatically fetches daily words from an online Wordle API, eliminating the need for manual admin input. Each day, the bot will:
+- Fetch the official daily word from a reliable Wordle API
+- Store it in the database for consistency
+- Provide fallback words if the API is unavailable
+- Allow admin override if needed
+
 ### For Users
 1. **Connect Account**: Link your Discord to your RetroAchievements profile using `/wordle-connect`
 2. **Check Daily Word**: Use `/wordle-status` to see today's word and required letters
@@ -31,8 +38,9 @@ If today's word is **ASSET**, you need achievements starting with:
 - `/wordle-reset` - Reset today's submission if you made an error
 
 ### Admin Commands
-- `/wordle-admin set-word <word>` - Set today's 5-letter word
+- `/wordle-admin set-word <word>` - Override today's word (normally auto-fetched from API)
 - `/wordle-admin get-word` - View current word and event status
+- `/wordle-admin refresh-word` - Force refresh today's word from API
 
 ## Setup Instructions
 
@@ -54,8 +62,11 @@ Deploy the new slash commands:
 bun run deploy-commands
 ```
 
-### 3. Set Daily Word
-Admins must set the daily word to activate the event:
+### 3. Automatic Daily Words
+The system now automatically fetches daily words from an online Wordle API. No admin input is required for normal operation.
+
+**Optional Admin Override:**
+If you need to set a custom word, use:
 ```
 /wordle-admin set-word ASSET
 ```
@@ -83,14 +94,16 @@ Admins must set the daily word to activate the event:
 - Prevents duplicate prize notifications
 
 ### ✅ Admin Controls
-- Set daily words easily
-- View current event status
+- Override daily words if needed (normally automatic)
+- View current event status and word source
+- Force refresh words from API
 - All admin commands require proper permissions
 
 ## Technical Details
 
 ### Services
 - **WordleService**: Manages daily words, letter validation, URL parsing
+- **WordleApiService**: Fetches daily words from online Wordle API with fallback support
 - **RAUserService**: Handles user connections, achievement validation via RA API
 
 ### Database Schema
